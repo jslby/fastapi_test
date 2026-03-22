@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Объединение отчётов</h1>
+    
+    <form action="/merge" method="post" enctype="multipart/form-data">
+        <p>FB отчёты (можно несколько):</p>
+        <input type="file" name="fb_files" multiple accept=".xlsx">
+        
+        <p>Keitaro отчёт:</p>
+        <input type="file" name="kt_file" accept=".csv">
+        
+        <br><br>
+        <button type="submit">Объединить и скачать</button>
+    </form>
+</body>
+</html>

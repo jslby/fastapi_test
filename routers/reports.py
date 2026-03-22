@@ -1,14 +1,14 @@
-from fastapi import APIRoutes, UploadFile, File
+from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import Response
-from typing import List
+from typing import List, Annotated
 from services.merger import merge_reports
 
-router = APIRoutes()
+router = APIRouter()
 
 @router.post("/merge")
 async def merge(
-    fb_files: List[UploadFile] = File(...),
-    kt_files: UploadFile = File(...)
+    fb_files: List[Annotated[UploadFile, File()]],
+    kt_files: Annotated[UploadFile, File()]
 ):
     fb_bytes = [await f.read() for f in fb_files]
     kt_bytes = await kt_files.read()

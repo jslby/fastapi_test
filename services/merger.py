@@ -23,7 +23,7 @@ def merge_reports(fb_files: list[bytes], kt_file: bytes) -> bytes:
     )
 
     kt_raw = pd.read_csv(BytesIO(kt_file), sep=";").iloc[:, 0:4]
-    kt_raw.column = ["creative", "regs", "deps", "revenue"]
+    kt_raw.columns = ["creative", "regs", "deps", "revenue"]
 
     result = pd.merge(fb_grouped, kt_raw, on="creative", how="left")
 

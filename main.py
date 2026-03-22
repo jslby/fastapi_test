@@ -1,5 +1,9 @@
 from fastapi import FastAPI
-from routers.reports import router
+from fastapi.staticfiles import StaticFiles
+from routers import reports, pages
 
 app = FastAPI()
-app.include_router(router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.include_router(pages.router)
+app.include_router(reports.router)

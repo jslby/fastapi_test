@@ -248,14 +248,14 @@
                 <div class="card-icon">📊</div>
                 <div>
                     <div class="card-title">Facebook Ads Manager</div>
-                    <div class="card-desc">Выгрузка по креативам · можно несколько файлов за разные периоды</div>
+                    <div class="card-desc">Выгрузка по креативам · можно несколько файлов с разных кабинетов</div>
                 </div>
             </div>
             <div class="upload-zone" id="fbDrop">
                 <input type="file" name="fb_files" multiple accept=".xlsx" id="fbInput">
                 <span class="upload-icon">📁</span>
                 <div class="upload-title">Выберите файлы .xlsx</div>
-                <div class="upload-hint">Спенд и клики за разные периоды просуммируются автоматически</div>
+                <div class="upload-hint">Спенд и клики с разных кабинетов просуммируются автоматически</div>
             </div>
             <div class="file-list" id="fbFileList"></div>
         </div>
@@ -341,12 +341,58 @@
     showFiles(document.getElementById('fbInput'), document.getElementById('fbFileList'), document.getElementById('fbDrop'));
     showFiles(document.getElementById('ktInput'), document.getElementById('ktFileList'), document.getElementById('ktDrop'));
 
-    document.getElementById('mergeForm').addEventListener('submit', () => {
+    document.getElementById('mergeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
         const btn = document.getElementById('submitBtn');
         btn.classList.add('loading-state');
         btn.disabled = true;
-        setTimeout(() => { btn.classList.remove('loading-state'); btn.disabled = false; }, 10000);
+
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('/merge', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                showError(error.detail || 'Неизвестная ошибка');
+                return;
+            }
+
+            // Скачиваем файл
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'result.csv';
+            a.click();
+
+        } catch {
+            showError('Не удалось подключиться к серверу');
+        } finally {
+            btn.classList.remove('loading-state');
+            btn.disabled = false;
+        }
     });
+
+    function showError(message) {
+        const existing = document.getElementById('errorMsg');
+        if (existing) existing.remove();
+
+        const div = document.createElement('div');
+        div.id = 'errorMsg';
+        div.style.cssText = `
+            margin-top: 12px; padding: 12px 16px;
+            background: #fff0f0; border: 1px solid #ffcdd2;
+            border-radius: 8px; color: #c62828;
+            font-size: 13px; display: flex; gap: 8px;
+        `;
+        div.innerHTML = `<span>⚠️</span><span>${message}</span>`;
+        document.querySelector('.btn-wrap').after(div);
+    }
 </script>
 
 </body>

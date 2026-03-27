@@ -44,7 +44,7 @@ def merge_reports(fb_files: list[bytes], kt_file: bytes) -> bytes:
         result["impressions"] = result["impressions"].fillna(0).astype(int)
 
         result["spend"] = result["spend"].round(2)
-        result["revenue"] = result["spend"].round(2)
+        result["revenue"] = result["revenue"].fillna(0).round(2)
 
         output = BytesIO()
         result.to_csv(output, index=False, sep=";", decimal=",", encoding="utf-8-sig")
